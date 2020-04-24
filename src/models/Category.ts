@@ -1,10 +1,14 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
   UpdateDateColumn,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
+
+/**
+ * @Entiy needes to be created before migration
+ */
 
 @Entity('categories')
 class Category {

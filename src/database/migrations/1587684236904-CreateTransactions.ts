@@ -14,7 +14,6 @@ export default class CreateTransactions1587684236904
             generationStrategy: 'uuid',
             default: 'uuid_generate_v4()',
           },
-          // name of transaction example: Salary
           {
             name: 'title',
             type: 'varchar',

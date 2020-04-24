@@ -1,5 +1,5 @@
-// import AppError from '../errors/AppError';
 import { getRepository, getCustomRepository } from 'typeorm';
+import AppError from '../errors/AppError';
 import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import Category from '../models/Category';
@@ -20,12 +20,15 @@ class CreateTransactionService {
   }: Request): Promise<Transaction> {
     const transactionRepository = getCustomRepository(TransactionsRepository);
     const categoryRepository = getRepository(Category);
-    const transactions = getRepository(Transaction);
 
     const { total } = await transactionRepository.getBalance();
 
+    if (total === 0 && type === 'outcome') {
+      throw new AppError('Error Declined');
+    }
+
     if (type === 'outcome' && total < value) {
-      throw Error('transaction declined');
+      throw new AppError('declined');
     }
 
     let transactionCategory = await categoryRepository.findOne({
@@ -39,13 +42,13 @@ class CreateTransactionService {
       await categoryRepository.save(transactionCategory);
     }
 
-    const transaction = await transactions.create({
+    const transaction = await transactionRepository.create({
       title,
       type,
       value,
       category: transactionCategory,
     });
-    await transactions.save(transaction);
+    await transactionRepository.save(transaction);
     return transaction;
   }
 }
